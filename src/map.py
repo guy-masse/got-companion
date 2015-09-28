@@ -195,6 +195,12 @@ class Map:
         self._armies = {}
 
     def set_armies(self, code, clan, nbShips, nbFootmen, nbKnights):
+        # make sure the tile can accept the given army
+        if nbShips != 0 and self._tiles[code].type() == LAND:
+            raise MapError('Cannot place ships on a land tile')
+        if nbFootmen + nbKnights != 0 and self._tiles[code].type() == WATER:
+            raise MapError('Cannot place footman or knights on a water tile')
+
         self._armies[code] = Armies(clan, nbShips, nbFootmen, nbKnights)
 
     def get_armies(self, code):
@@ -229,3 +235,9 @@ class Map:
                 tile = self._tiles[code]
                 score += 1 if tile._castle is None else tile._castle + 2
         return score
+
+class MapError(Exception):
+     def __init__(self, value):
+         self.value = value
+     def __str__(self):
+         return repr(self.value)

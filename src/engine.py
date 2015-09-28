@@ -81,13 +81,11 @@ class Engine:
         initialScore1 = self._map.score_player(clan1)
         initialScore2 = self._map.score_player(clan2)
 
+        # Create all move sequences
+        moveSequences = []
+
         for play1 in playsP1:
             for play2 in playsP2:
-
-                # Create all move sequences
-                moveSequences = []
-
-
                 #  Raid
                 #   ex: Play1 = GS:RAID(0), Ha:DEFENSE(1), L:MARCH(0)
                 #       Play2 = StSe:RAID(0), CP:RAID(0), Ri:MARCH(0)
@@ -97,7 +95,6 @@ class Engine:
 
                 #       raid1 = GS:RAID(0)
                 #       raid2 = StSe:RAID(0), CP:RAID(0)
-
                 if len(raid1) > 0 and len(raid2) > 0:
                     raid1Permutations = PermSpace(raid1)
                     raid2Permutations = PermSpace(raid2)
@@ -107,33 +104,40 @@ class Engine:
                         for raid2Permutation in raid2Permutations:
                             sequence = []
                             i = 0
-                            while i < max(len(raid1Permutation), len(raid2Permutation)):
+                            j = 0
+                            while i + j < len(raid1Permutation) + len(raid2Permutation):
                                 if i < len(raid1Permutation):
-                                    sequence.append(raid1Permutation[i])
-                                if i < len(raid2Permutation):
-                                    sequence.append(raid2Permutation[i])
-                                i += 1
-                                # all possible sequence of alternative plays between 2 players, for raid commands
-                                # sequence = [L/GS:RAID(0), GJ/StSe:RAID(0), GJ/CP:RAID(0); L/GS:RAID(0), GJ/CP:RAID(0), GJ/StSe:RAID(0)]
-                                # this must be duplicated for each potential target of the command
-
+                                    sequence.append(Move(clan1, raid1Permutation[i][0], raid1Permutation[i][1], None))
+                                    i += 1
+                                if j < len(raid2Permutation):
+                                    sequence.append(Move(clan2, raid2Permutation[j][0], raid2Permutation[j][1], None))
+                                    j += 1
+                            # all possible sequence of alternative plays between 2 players, for raid commands
+                            # sequence = [L/GS:RAID(0), GJ/StSe:RAID(0), GJ/CP:RAID(0); L/GS:RAID(0), GJ/CP:RAID(0), GJ/StSe:RAID(0)]
+                            # this must be duplicated for each potential target of the command
+                            moveSequences.append(sequence)
 
                 elif len(raid1) > 0:
-                    raid1Permutations = PermSpace(raid1)
-                    for raid1Permutation in raid1Permutations:
-                        print tuple(raid1Permutation)
+                    raidPermutations = PermSpace(raid1)
+                    for raidPermutation in raidPermutations:
+                        sequence = []
+                        for i in range(0, len(raidPermutation)):
+                            sequence.append(Move(clan1, raidPermutation[i][0], raidPermutation[i][1], None))
+                        moveSequences.append(sequence)
                 elif len(raid2) > 0:
-                    raid2Permutations = PermSpace(raid2)
-                    for raid2Permutation in raid2Permutations:
-                        print tuple(raid2Permutation)
+                    raidPermutations = PermSpace(raid2)
+                    for raidPermutation in raidPermutations:
+                        sequence = []
+                        for i in range(0, len(raidPermutation)):
+                            sequence.append(Move(clan2, raidPermutation[i][0], raidPermutation[i][1], None))
+                        moveSequences.append(sequence)
 
                 #  March
-
 
 
                 # Consolidate
 
 
                 print '%s <> %s' % (play1, play2)
-        return
+        return moveSequences
 

@@ -20,6 +20,16 @@ class TestMap(unittest.TestCase):
         self.assertTrue(klWaterNeighbors.__contains__('BB'))
         self.assertFalse(klWaterNeighbors.__contains__('SB'))
 
+    def test_set_armies(self):
+        map = Map()
+
+        with self.assertRaises(MapError):
+            map.set_armies('L', LANNISTER, 1, 0, 1)
+        map.set_armies('L', LANNISTER, 0, 0, 1)
+        with self.assertRaises(MapError):
+            map.set_armies('BB', LANNISTER, 0, 0, 1)
+        map.set_armies('BB', LANNISTER, 1, 0, 0)
+
     def test_score(self):
         map = Map()
 

@@ -25,13 +25,35 @@ class TestEngine(unittest.TestCase):
 
         self.assertTrue(len(s) == 1)
 
-    def test_simulate(self):
+    def test_simulate_raids(self):
         plays1 = set()
-        plays1.add(Play(['A', 'B'], (ORDERS[0], ORDERS[1])))
+        plays1.add(Play(['KL', 'BB', 'NS'], (Order(MARCH, value=0), Order(SUPPORT, value=0), Order(RAID))))
         plays2 = set()
-        plays2.add(Play(['Y', 'Z'], (ORDERS[0], ORDERS[2])))
+        plays2.add(Play(['KW', 'SB', 'ShSe'], (Order(DEFEND, value=1), Order(RAID), Order(RAID))))
 
         map = Map()
         engine = Engine(map)
+        map.set_armies('KL', BARATHEON, 0, 0, 1)
+        map.set_armies('BB', BARATHEON, 2, 0, 0)
+        map.set_armies('NS', BARATHEON, 1, 0, 0)
+        map.set_armies('KW', MARTELL, 0, 1, 0)
+        map.set_armies('SB', MARTELL, 1, 0, 0)
+        map.set_armies('ShSe', MARTELL, 1, 0, 0)
+
+        engine.simulate_2_players(LANNISTER, plays1, GREYJOY, plays2)
+
+    def test_simulate_raids2(self):
+        plays1 = set()
+        plays1.add(Play(['KL', 'BB'], (Order(MARCH, value=0), Order(SUPPORT, value=0))))
+        plays2 = set()
+        plays2.add(Play(['KW', 'SB', 'ShSe'], (Order(DEFEND, value=1), Order(RAID), Order(RAID))))
+
+        map = Map()
+        engine = Engine(map)
+        map.set_armies('KL', BARATHEON, 0, 0, 1)
+        map.set_armies('BB', BARATHEON, 2, 0, 0)
+        map.set_armies('KW', MARTELL, 0, 1, 0)
+        map.set_armies('SB', MARTELL, 1, 0, 0)
+        map.set_armies('ShSe', MARTELL, 1, 0, 0)
 
         engine.simulate_2_players(LANNISTER, plays1, GREYJOY, plays2)

@@ -194,6 +194,9 @@ class Map:
 
         self._armies = {}
 
+    def remove_armies(self, code):
+        self._armies.pop(code)
+
     def set_armies(self, code, clan, nbShips, nbFootmen, nbKnights):
         # make sure the tile can accept the given army
         if nbShips != 0 and self._tiles[code].type() == LAND:
@@ -208,6 +211,14 @@ class Map:
             return self._armies.get(code)
         else:
             return None
+
+    # Returns a Set of tuple (terrainCode : String, army : Armies) for all armies of the given clan
+    def get_armies_by_clan(self, clan):
+        armies = set()
+        for k,v in self._armies.iteritems():
+            if v._clan == clan:
+                armies.add((k, v))
+        return armies
 
     def find_neighbors(self, code, type):
         out = []

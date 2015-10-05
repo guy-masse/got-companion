@@ -6,20 +6,20 @@ from order import *
 
 class Play:
     def __init__(self, terrain, orders):
-        self._terrain = terrain
+        self._terrain = list(terrain)
         self._orders = orders
 
     def __str__(self):
         out = []
         for x in range(0, len(self._terrain)):
-            out.append('%s:%s' % (self._terrain[x], self._orders[x]))
+            out.append('%s:%s' % (self._terrain[x][0], self._orders[x]))
         return ','.join(out)
 
     def get_plays_of_type(self, type):
         plays = []
         for x in range(0, len(self._orders)):
             if self._orders[x].type() == type:
-                plays.append((self._terrain[x], self._orders[x]))
+                plays.append((self._terrain[x][0], self._orders[x]))
         return plays
 
     def __len__(self):
@@ -56,10 +56,13 @@ class Engine:
             return False
         return True
 
-    def possible_plays(self, terrain, nbStar):
+    def possible_plays(self, clan, nbStar):
         possible_plays = set()
+        terrainNArmies = list(self._map.get_armies_by_clan(clan))
+        if len(terrainNArmies) == 0:
+            return possible_plays
 
-        orders = Orders(len(terrain), nbStar)
+        orders = Orders(len(terrainNArmies), nbStar)
         for option in orders._options:
             # TODO Optimization : remove senseless random pick (March -1 when March 0 was not picked... and such)
 
@@ -69,11 +72,11 @@ class Engine:
                 issue = False
 
                 # find out if the terrain may play this order
-                for i in range(0, len(terrain)):
-                    if not self.can_play(permutation[i], self._map.get_tile(terrain[i])):
+                for i in range(0, len(terrainNArmies)):
+                    if not self.can_play(permutation[i], self._map.get_tile(terrainNArmies[i][0])):
                         issue = True
                 if not issue:
-                    possible_plays.add(Play(terrain, tuple(permutation)))
+                    possible_plays.add(Play(terrainNArmies, tuple(permutation)))
 
         return possible_plays
 

@@ -1,6 +1,23 @@
+ # Minimum package dependency
+ ```
  sudo pip install combi
- 
+ ```
  
  # TODOs
  
- Reverse Plays and Map set-up. Map should be filled with armies and then the possibles plays should be generated based on where the troops are. That would reduce the number of possible plays as in this example : a single troop without enemy should not place a raid order. 
+ 
+ # Model
+ 
+ ## Map
+ * Contains all possible territories
+ * Link between territories
+ * Types and available resources
+ 
+ ## Engine
+ * Manage the possible plays given a number of stars
+ * Interleaves possible order of plays given the internal Map with armies predetermined
+ 
+ 
+ 
+ 
+ 

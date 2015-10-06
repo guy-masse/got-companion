@@ -45,7 +45,6 @@ class Move:
         self._start = startTerrain
         self._destination = destTerrain
 
-
 class Engine:
 
     def __init__(self, map):
@@ -81,66 +80,68 @@ class Engine:
         return possible_plays
 
     def simulate_2_players(self, clan1, playsP1, clan2, playsP2):
-        initialScore1 = self._map.score_player(clan1)
-        initialScore2 = self._map.score_player(clan2)
-
-        # Create all move sequences
-        moveSequences = []
-
+        rootMoveSequences = {}
         for play1 in playsP1:
             for play2 in playsP2:
-                #  Raid
-                #   ex: Play1 = GS:RAID(0), Ha:DEFENSE(1), L:MARCH(0)
-                #       Play2 = StSe:RAID(0), CP:RAID(0), Ri:MARCH(0)
-                #
-                raid1 = play1.get_plays_of_type(RAID)
-                raid2 = play2.get_plays_of_type(RAID)
-
-                #       raid1 = GS:RAID(0)
-                #       raid2 = StSe:RAID(0), CP:RAID(0)
-                if len(raid1) > 0 and len(raid2) > 0:
-                    raid1Permutations = PermSpace(raid1)
-                    raid2Permutations = PermSpace(raid2)
-                    # raidPermission1 = [GS:RAID(0)]
-                    # raidPermission2 = [(StSe:RAID(0), CP:RAID(0)), (CP:RAID(0), StSe:RAID(0))]
-                    for raid1Permutation in raid1Permutations:
-                        for raid2Permutation in raid2Permutations:
-                            sequence = []
-                            i = 0
-                            j = 0
-                            while i + j < len(raid1Permutation) + len(raid2Permutation):
-                                if i < len(raid1Permutation):
-                                    sequence.append(Move(clan1, raid1Permutation[i][0], raid1Permutation[i][1], None))
-                                    i += 1
-                                if j < len(raid2Permutation):
-                                    sequence.append(Move(clan2, raid2Permutation[j][0], raid2Permutation[j][1], None))
-                                    j += 1
-                            # all possible sequence of alternative plays between 2 players, for raid commands
-                            # sequence = [L/GS:RAID(0), GJ/StSe:RAID(0), GJ/CP:RAID(0); L/GS:RAID(0), GJ/CP:RAID(0), GJ/StSe:RAID(0)]
-                            # this must be duplicated for each potential target of the command
-                            moveSequences.append(sequence)
-
-                elif len(raid1) > 0:
-                    raidPermutations = PermSpace(raid1)
-                    for raidPermutation in raidPermutations:
-                        sequence = []
-                        for i in range(0, len(raidPermutation)):
-                            sequence.append(Move(clan1, raidPermutation[i][0], raidPermutation[i][1], None))
-                        moveSequences.append(sequence)
-                elif len(raid2) > 0:
-                    raidPermutations = PermSpace(raid2)
-                    for raidPermutation in raidPermutations:
-                        sequence = []
-                        for i in range(0, len(raidPermutation)):
-                            sequence.append(Move(clan2, raidPermutation[i][0], raidPermutation[i][1], None))
-                        moveSequences.append(sequence)
+                #  Raids
+                raidSequences = self.interleaving_of_plays_2_players(RAID, clan1, play1, clan2, play2)
 
                 #  March
-
+                marchSequences = self.interleaving_of_plays_2_players(MARCH, clan1, play1, clan2, play2)
 
                 # Consolidate
+                consolidateSequences = self.interleaving_of_plays_2_players(CONSOLIDATE, clan1, play1, clan2, play2)
 
+                rootMoveSequences[(play1, play2)] = (raidSequences, marchSequences, consolidateSequences)
 
-                print '%s <> %s' % (play1, play2)
+        return rootMoveSequences
+
+    def interleaving_of_plays_2_players(self, type, clan1, play1, clan2, play2):
+        moveSequences = []
+        #  Raid
+        #   ex: Play1 = GS:RAID(0), Ha:DEFENSE(1), L:MARCH(0)
+        #       Play2 = StSe:RAID(0), CP:RAID(0), Ri:MARCH(0)
+        #
+        raid1 = play1.get_plays_of_type(type)
+        raid2 = play2.get_plays_of_type(type)
+
+        #       raid1 = GS:RAID(0)
+        #       raid2 = StSe:RAID(0), CP:RAID(0)
+        if len(raid1) > 0 and len(raid2) > 0:
+            raid1Permutations = PermSpace(raid1)
+            raid2Permutations = PermSpace(raid2)
+            # raidPermission1 = [GS:RAID(0)]
+            # raidPermission2 = [(StSe:RAID(0), CP:RAID(0)), (CP:RAID(0), StSe:RAID(0))]
+            for raid1Permutation in raid1Permutations:
+                for raid2Permutation in raid2Permutations:
+                    sequence = []
+                    i = 0
+                    j = 0
+                    while i + j < len(raid1Permutation) + len(raid2Permutation):
+                        if i < len(raid1Permutation):
+                            sequence.append(Move(clan1, raid1Permutation[i][1], raid1Permutation[i][0], None))
+                            i += 1
+                        if j < len(raid2Permutation):
+                            sequence.append(Move(clan2, raid2Permutation[j][1], raid2Permutation[j][0], None))
+                            j += 1
+                    # all possible sequence of alternative plays between 2 players, for raid commands
+                    # sequence = [L/GS:RAID(0), GJ/StSe:RAID(0), GJ/CP:RAID(0); L/GS:RAID(0), GJ/CP:RAID(0), GJ/StSe:RAID(0)]
+                    # this must be duplicated for each potential target of the command
+                    moveSequences.append(sequence)
+
+        elif len(raid1) > 0:
+            raidPermutations = PermSpace(raid1)
+            for raidPermutation in raidPermutations:
+                sequence = []
+                for i in range(0, len(raidPermutation)):
+                    sequence.append(Move(clan1, raidPermutation[i][1], raidPermutation[i][0], None))
+                moveSequences.append(sequence)
+        elif len(raid2) > 0:
+            raidPermutations = PermSpace(raid2)
+            for raidPermutation in raidPermutations:
+                sequence = []
+                for i in range(0, len(raidPermutation)):
+                    sequence.append(Move(clan2, raidPermutation[i][1], raidPermutation[i][0], None))
+                moveSequences.append(sequence)
+
         return moveSequences
-

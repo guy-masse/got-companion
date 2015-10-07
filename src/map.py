@@ -162,7 +162,7 @@ class Map:
                         'MM' : ['T', 'F', 'E', 'NS', 'CP'],
                         'P' : ['IB'],
                         'Ri' : ['IB', 'Se', 'Ha', 'StSe', 'L', 'GS'],
-                        'GS' : ['SuSe', 'IB', 'L', 'Ri',' SM'],
+                        'GS' : ['SuSe', 'IB', 'L', 'Ri','SM'],
                         'L' : ['GS', 'SM', 'Ri', 'StSe'],
                         'StSe' : ['L', 'Ri', 'Ha', 'Bl', 'SM'],
                         'Ha' : ['Ri', 'StSe', 'CP', 'Bl'],
@@ -207,7 +207,7 @@ class Map:
         self._armies[code] = Armies(clan, nbShips, nbFootmen, nbKnights)
 
     def get_armies(self, code):
-        if code in self._armies:
+        if code in self._armies.keys():
             return self._armies.get(code)
         else:
             return None
@@ -235,6 +235,22 @@ class Map:
 
     def find_water_neighbor(self, code):
         return self.find_neighbors(code, WATER)
+
+    # Return an array of the tile codes where this clan could raid an opposing army
+    def find_raideable_neighbors(self, code, raidingClan):
+        out = []
+        tile = self._tiles[code]
+        candidateTiles = []
+        if tile._terrain == WATER:
+            candidateTiles.extend(self.find_water_neighbor(code))
+            candidateTiles.extend(self.find_land_neighbor(code))
+        else:
+            candidateTiles.extend(self.find_land_neighbor(code))
+        for candidate in candidateTiles:
+            army = self.get_armies(candidate)
+            if army is not None and army._clan != raidingClan:
+                out.append(candidate)
+        return out
 
     def get_tile(self, code):
         return self._tiles[code]

@@ -53,6 +53,19 @@ class TestMap(unittest.TestCase):
                 self.assertEqual(0, v._ships)
         self.assertEqual(4, len(lannister_armies))
 
+    def test_radeable_neibhor(self):
+        map = Map()
+
+        map.set_armies('L', LANNISTER, 0, 1, 1)
+        map.set_armies('GS', GREYJOY, 1, 0, 0)
+        map.set_armies('Ri', GREYJOY, 0, 1, 1)
+        greyjoyTargets = map.find_raideable_neighbors('L', LANNISTER)
+        self.assertEqual(1, len(greyjoyTargets))
+        self.assertEqual('Ri', greyjoyTargets[0])
+        lannisterTargets = map.find_raideable_neighbors('GS', GREYJOY)
+        self.assertEqual(1, len(lannisterTargets))
+        self.assertEqual('L', lannisterTargets[0])
+
     def test_score(self):
         map = Map()
 

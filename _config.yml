@@ -1,0 +1,12 @@
+# Site settings
+title: GOT - Companion
+email: guy.masse@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  Open Source project aiming to create a 'companion' tool to help a human play the Game of Thrones Boardgame
+baseurl: "/got-companion" # the subpath of your site, e.g. /blog/
+url: "http://guy-masse.github.io/got-companion" # the base hostname & protocol for your site
+twitter_username:
+github_username:  guy-masse
+
+# Build settings
+markdown: kramdown

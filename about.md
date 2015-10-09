@@ -4,25 +4,12 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](http://jekyllrb.com/)
+I am a beginner at this boardgame. But having lost 'incredibly' bad to it more than once, I taught I should put my development skills to the test and built a nice tool to help me out beat my friends!
 
-You can find the source code for the Jekyll new theme at: [github.com/jglovier/jekyll-new](https://github.com/jglovier/jekyll-new)
+This simple tools should provide recommendation on your plays given the current state of a game. I would also like to have different strategies implemented as to provide directed advices towards specific goals: mustering, consolidating power, etc.
 
-You can find the source code for Jekyll at [github.com/jekyll/jekyll](https://github.com/jekyll/jekyll)
+If you do not own this game yet, go run and buy it. It is a great boardgame. And if you like the [books] [george_books] or the [tv show] [hbo_got], you will find lots of similarities.
 
-$$
-\begin{align*}
-  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
-  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
-  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
-      \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
-      \vdots & \ddots & \vdots \\
-      \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
-    \end{array} \right)
-  \left( \begin{array}{c}
-      y_1 \\
-      \vdots \\
-      y_n
-    \end{array} \right)
-\end{align*}
-$$
+
+[george_books]: http://www.georgerrmartin.com/all-books
+[hbo_got]:      http://www.hbocanada.com/gameofthrones/

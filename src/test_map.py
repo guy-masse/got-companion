@@ -41,16 +41,16 @@ class TestMap(unittest.TestCase):
         lannister_armies = map.get_armies_by_clan(LANNISTER)
         for k,v in lannister_armies:
             if k == 'O':
-                self.assertEqual(1, v._knight)
+                self.assertEqual(1, v.nb_knights)
             if k == 'KL':
-                self.assertEqual(1, v._footmen)
-                self.assertEqual(1, v._knight)
+                self.assertEqual(1, v.nb_footmen)
+                self.assertEqual(1, v.nb_knights)
             if k == 'BB':
-                self.assertEqual(1, v._ships)
+                self.assertEqual(1, v.nb_ships)
             if k == 'L':
-                self.assertEqual(1, v._knight)
-                self.assertEqual(0, v._footmen)
-                self.assertEqual(0, v._ships)
+                self.assertEqual(1, v.nb_knights)
+                self.assertEqual(0, v.nb_footmen)
+                self.assertEqual(0, v.nb_ships)
         self.assertEqual(4, len(lannister_armies))
 
     def test_radeable_neibhor(self):

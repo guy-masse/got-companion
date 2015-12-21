@@ -1,38 +1,21 @@
-from order import *
+from collections import namedtuple
 
-WATER=0
-LAND=1
+WATER = 0
+LAND = 1
 
-CASTLE=0
-STRONGHOLD=1
+CASTLE = 0
+STRONGHOLD = 1
 
-STARK=0
-GREYJOY=1
-LANNISTER=2
-BARATHEON=3
-TYRELL=4
-MARTELL=5
-
-class Terrain:
-
-    def __init__(self, supply, power, terrain, castle, fortitication):
-        self._terrain = terrain
-        self._supply = supply
-        self._power = power
-        self._castle = castle
-        self._fortification = fortitication
-
-    def type(self):
-        return self._terrain
+STARK = 0
+GREYJOY = 1
+LANNISTER = 2
+BARATHEON = 3
+TYRELL = 4
+MARTELL = 5
 
 
-class Armies:
-
-    def __init__(self, clan, nbShips, nbFootmen, nbKnights):
-        self._clan = clan
-        self._ships = nbShips
-        self._footmen = nbFootmen
-        self._knight = nbKnights
+Terrain = namedtuple('Terrain', ['supply', 'power', 'type', 'castle', 'fortification'])
+Armies = namedtuple('Armies', ['clan', 'nb_ships', 'nb_footmen', 'nb_knights', 'nb_sieges'])
 
 
 class Map:
@@ -197,14 +180,14 @@ class Map:
     def remove_armies(self, code):
         self._armies.pop(code)
 
-    def set_armies(self, code, clan, nbShips, nbFootmen, nbKnights):
+    def set_armies(self, code, clan, nb_ships=0, nb_footmen=0, nb_knights=0, nb_sieges=0):
         # make sure the tile can accept the given army
-        if nbShips != 0 and self._tiles[code].type() == LAND:
+        if nb_ships != 0 and self._tiles[code].type == LAND:
             raise MapError('Cannot place ships on a land tile')
-        if nbFootmen + nbKnights != 0 and self._tiles[code].type() == WATER:
+        if nb_footmen + nb_knights != 0 and self._tiles[code].type == WATER:
             raise MapError('Cannot place footman or knights on a water tile')
 
-        self._armies[code] = Armies(clan, nbShips, nbFootmen, nbKnights)
+        self._armies[code] = Armies(clan, nb_ships, nb_footmen, nb_knights, nb_sieges)
 
     def get_armies(self, code):
         if code in self._armies.keys():
@@ -216,7 +199,7 @@ class Map:
     def get_armies_by_clan(self, clan):
         armies = set()
         for k,v in self._armies.iteritems():
-            if v._clan == clan:
+            if v.clan == clan:
                 armies.add((k, v))
         return armies
 
@@ -225,7 +208,7 @@ class Map:
         neighbors = self._graph[code]
         for neighbor in neighbors:
             terrain = self._tiles[neighbor]
-            if terrain._terrain == type:
+            if terrain.type == type:
                 out.append(neighbor)
 
         return out
@@ -241,14 +224,14 @@ class Map:
         out = []
         tile = self._tiles[code]
         candidateTiles = []
-        if tile._terrain == WATER:
+        if tile.type == WATER:
             candidateTiles.extend(self.find_water_neighbor(code))
             candidateTiles.extend(self.find_land_neighbor(code))
         else:
             candidateTiles.extend(self.find_land_neighbor(code))
         for candidate in candidateTiles:
             army = self.get_armies(candidate)
-            if army is not None and army._clan != raidingClan:
+            if army is not None and army.clan != raidingClan:
                 out.append(candidate)
         return out
 
@@ -258,13 +241,16 @@ class Map:
     def score_player(self, clan):
         score = 0
         for code, army in self._armies.iteritems():
-            if army._clan == clan:
+            if army.clan == clan:
                 tile = self._tiles[code]
-                score += 1 if tile._castle is None else tile._castle + 2
+                score += 1 if tile.castle is None else tile.castle + 2
         return score
 
+
 class MapError(Exception):
-     def __init__(self, value):
-         self.value = value
-     def __str__(self):
-         return repr(self.value)
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)

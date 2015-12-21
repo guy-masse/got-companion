@@ -6,6 +6,7 @@ DEFEND = 2
 MARCH = 3
 CONSOLIDATE = 4
 
+
 class Order:
 
     def __init__(self, type, value=0, star=False):
@@ -43,6 +44,27 @@ class Order:
     def __hash__(self):
         return hash(self.__key())
 
+    @classmethod
+    def _get_nb_stars(cls, orders):
+        out = 0
+        for order in orders:
+            if order._star:
+                out += 1
+        return out
+
+    @classmethod
+    def orders(cls, nb_terrain, nb_stars):
+        """
+        :param nb_terrain: number of terrain owned by the player
+        :param nb_stars:  number of starred order available
+        :return: a permutation of plausible orders for the given parameters
+        """
+        combinations = CombSpace(ORDERS, nb_terrain)
+        for combination in combinations:
+            if cls._get_nb_stars(combination) <= nb_stars:
+                yield combination
+
+
 ORDERS = [
     Order(RAID),
     Order(RAID),
@@ -60,19 +82,3 @@ ORDERS = [
     Order(CONSOLIDATE),
     Order(CONSOLIDATE, star=True)
 ]
-
-class Orders:
-
-    def __init__(self, nbTerrain, nbStars):
-        self._options = []
-        combinations = CombSpace(ORDERS, nbTerrain)
-        for combination in combinations:
-            if self.get_nb_stars(combination) <= nbStars:
-                self._options.append(combination)
-
-    def get_nb_stars(self, orders):
-        out = 0
-        for order in orders:
-            if order._star:
-                out += 1
-        return out

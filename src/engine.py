@@ -1,5 +1,3 @@
-import copy
-from combi import *
 from map import *
 from order import *
 
@@ -37,6 +35,7 @@ class Play:
     def __hash__(self):
         return hash(self.__key())
 
+
 class Move:
 
     def __init__(self, clan, order, startTerrain, destTerrain):
@@ -45,13 +44,22 @@ class Move:
         self._start = startTerrain
         self._destination = destTerrain
 
+
 class Engine:
+
+    @classmethod
+    def initial_game(cls):
+        return Engine(Map())
 
     def __init__(self, map):
         self._map = map
 
+    @property
+    def map(self):
+        return self._map
+
     def can_play(self, order, tile):
-        if order.type() == CONSOLIDATE and tile.type() == WATER:
+        if order.type == CONSOLIDATE and tile.type == WATER:
             return False
         return True
 
@@ -61,12 +69,11 @@ class Engine:
         if len(terrainNArmies) == 0:
             return possible_plays
 
-        orders = Orders(len(terrainNArmies), nbStar)
-        for option in orders._options:
+        for orders in Order.orders(len(terrainNArmies), nbStar):
             # TODO Optimization : remove senseless random pick (March -1 when March 0 was not picked... and such)
 
             # see all possible permutation of the orders
-            permutations = PermSpace(tuple(option))
+            permutations = PermSpace(tuple(orders))
             for permutation in permutations:
                 issue = False
 

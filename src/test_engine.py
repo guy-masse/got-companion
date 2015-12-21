@@ -49,8 +49,8 @@ class TestEngine(unittest.TestCase):
 
     def test_simulate_interleaving(self):
         # Play already ordered
-        plays1 = Play([('KL', Armies(BARATHEON, 0, 0, 1)), ('BB', Armies(BARATHEON, 2, 0, 0)), ('NS', Armies(BARATHEON, 1, 0, 0))], (Order(MARCH, value=0), Order(SUPPORT, value=0), Order(RAID)))
-        plays2 = Play([('KW', Armies(MARTELL, 0, 1, 0)), ('SB', Armies(MARTELL, 1, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0))], (Order(DEFEND, value=1), Order(RAID), Order(RAID)))
+        plays1 = Play([('KL', Armies(BARATHEON, 0, 0, 1, 0)), ('BB', Armies(BARATHEON, 2, 0, 0, 0)), ('NS', Armies(BARATHEON, 1, 0, 0, 0))], (Order(MARCH, value=0), Order(SUPPORT, value=0), Order(RAID)))
+        plays2 = Play([('KW', Armies(MARTELL, 0, 1, 0, 0)), ('SB', Armies(MARTELL, 1, 0, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0, 0))], (Order(DEFEND, value=1), Order(RAID), Order(RAID)))
 
         map = Map()
         engine = Engine(map)
@@ -64,7 +64,7 @@ class TestEngine(unittest.TestCase):
         self.assertEqual(MARTELL, raidSubSequences[0][1]._clan, 'Second player is MARTELL in this setup')
         self.assertEqual(MARTELL, raidSubSequences[0][2]._clan, 'Third player is MARTELL in this setup, BARATHEON only had one raid order')
 
-        plays3 = Play([('KL', Armies(BARATHEON, 0, 0, 1)), ('BB', Armies(BARATHEON, 2, 0, 0)), ('NS', Armies(BARATHEON, 1, 0, 0))], (Order(MARCH, value=0), Order(RAID), Order(RAID)))
+        plays3 = Play([('KL', Armies(BARATHEON, 0, 0, 1, 0)), ('BB', Armies(BARATHEON, 2, 0, 0, 0)), ('NS', Armies(BARATHEON, 1, 0, 0, 0))], (Order(MARCH, value=0), Order(RAID), Order(RAID)))
         raidSubSequences = engine.interleaving_of_plays_2_players(RAID, BARATHEON, plays3, MARTELL, plays2)
 
         self.assertEqual(4, len(raidSubSequences), 'Given plays provides 4 possibles interleaving of raid orders since both players have 2 raids')
@@ -76,12 +76,12 @@ class TestEngine(unittest.TestCase):
     def test_simulate_root_sequences(self):
         # Available Plays
         plays1 = set()
-        plays1.add(Play([('KL', Armies(BARATHEON, 0, 0, 1)), ('BB', Armies(BARATHEON, 2, 0, 0))], (Order(MARCH, value=0), Order(SUPPORT, value=0))))
-        plays1.add(Play([('KL', Armies(BARATHEON, 0, 0, 1)), ('BB', Armies(BARATHEON, 2, 0, 0))], (Order(MARCH, value=1), Order(RAID, value=0))))
+        plays1.add(Play([('KL', Armies(BARATHEON, 0, 0, 1, 0)), ('BB', Armies(BARATHEON, 2, 0, 0, 0))], (Order(MARCH, value=0), Order(SUPPORT, value=0))))
+        plays1.add(Play([('KL', Armies(BARATHEON, 0, 0, 1, 0)), ('BB', Armies(BARATHEON, 2, 0, 0, 0))], (Order(MARCH, value=1), Order(RAID, value=0))))
         plays2 = set()
-        plays2.add(Play([('KW', Armies(MARTELL, 0, 1, 0)), ('SB', Armies(MARTELL, 1, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0))], (Order(DEFEND, value=1), Order(RAID), Order(RAID))))
-        plays2.add(Play([('KW', Armies(MARTELL, 0, 1, 0)), ('SB', Armies(MARTELL, 1, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0))], (Order(DEFEND, value=2), Order(SUPPORT, value=1), Order(RAID))))
-        plays2.add(Play([('KW', Armies(MARTELL, 0, 1, 0)), ('SB', Armies(MARTELL, 1, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0))], (Order(MARCH, value=1), Order(MARCH), Order(RAID))))
+        plays2.add(Play([('KW', Armies(MARTELL, 0, 1, 0, 0)), ('SB', Armies(MARTELL, 1, 0, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0, 0))], (Order(DEFEND, value=1), Order(RAID), Order(RAID))))
+        plays2.add(Play([('KW', Armies(MARTELL, 0, 1, 0, 0)), ('SB', Armies(MARTELL, 1, 0, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0, 0))], (Order(DEFEND, value=2), Order(SUPPORT, value=1), Order(RAID))))
+        plays2.add(Play([('KW', Armies(MARTELL, 0, 1, 0, 0)), ('SB', Armies(MARTELL, 1, 0, 0, 0)), ('ShSe', Armies(MARTELL, 1, 0, 0, 0))], (Order(MARCH, value=1), Order(MARCH), Order(RAID))))
 
         map = Map()
         engine = Engine(map)
